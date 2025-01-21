@@ -58,7 +58,11 @@ std::vector<char> serialize(Packet &p)
 
     std::memcpy(ptr, &p.global_var, sizeof(uint32_t));
 
-    std::cout << "Serialized packet: " << buffer.data() << std::endl;
+    for(auto c : buffer) 
+    {
+        std:cout << c;
+    }
+    std::cout << endl;
 
     return buffer;
 
@@ -126,8 +130,7 @@ int main(int argc, char* argv[]) {
 
             std::vector<char> serialized_packet = serialize(p);
             MPI_Send(serialized_packet.data(), serialized_packet.size(), MPI_CHAR, rank + 1, 0, MPI_COMM_WORLD);
-
-            std::cout << "Process " << rank << " sent to " << rank + 1 << ": " << p.rc.GetHLC() << ", " << p.rc.GetBitmap() << ", " << p.rc.GetOffsets() << ", " << p.rc.GetCounters() << ", " << p.seq_no << ", " << p.global_var << std::endl;
+            
         }
 
         // Receive updated value from the previous process

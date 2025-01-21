@@ -57,8 +57,8 @@ public:
     /** Default constructor, with value 0. */
     inline ReplayClock() : hlc(), offset_bitmap(), offsets(), counters(), nodeId(), epsilon(), interval()
     {
-        // Set offset of node to 0
-        offset_bitmap[nodeId] = 0;
+        // Set offset of node to 1
+        offset_bitmap[nodeId] = 1;
     } 
 
 
@@ -69,8 +69,8 @@ public:
         offsets         = 0;
         counters        = 0;
 
-        // Set offset of node to 0
-        offset_bitmap[nodeId] = 0;
+        // Set offset of node to 1
+        offset_bitmap[nodeId] = 1;
     }
 
     /** Specification constructor. */

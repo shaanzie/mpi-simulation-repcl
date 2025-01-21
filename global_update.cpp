@@ -20,10 +20,10 @@ class Packet {
         ReplayClock rc;
         int global_var;
 
-        Packet(uint32_t seq_no, ReplayClock rc, uint32_t global_var) {
-            seq_no = seq_no;
-            rc = rc;
-            global_var = global_var;
+        Packet(uint32_t s, ReplayClock c, uint32_t g) {
+            seq_no = s;
+            rc = c;
+            global_var = g;
         }
 
         ReplayClock getReplayClock()

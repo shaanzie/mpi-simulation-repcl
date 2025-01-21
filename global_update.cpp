@@ -80,8 +80,6 @@ Packet deserialize(const std::vector<char>& buffer, int rank)
 
     Packet p = Packet(seq_no, rc, global_var);
 
-    std::cout << "Process " << rank << " received: " << hlc << ", " << offsetbitmap << ", " << offsets << ", " << counters << ", " << seq_no << ", " << global_var << endl;
-
     return p;
 }
 
@@ -117,6 +115,8 @@ int main(int argc, char* argv[]) {
 
             std::vector<char> serialized_packet = serialize(p);
             MPI_Send(serialized_packet.data(), serialized_packet.size(), MPI_CHAR, rank + 1, 0, MPI_COMM_WORLD);
+
+            std::cout << "Process " << rank << " sent to " << rank + 1 << ": " << p.rc.GetHLC() << ", " << p.rc.GetBitmap() << ", " << p.rc.GetOffsets() << ", " << p.rc.GetCounters() << ", " << p.seq_no << ", " << p.global_var << std::endl;
         }
 
         // Receive updated value from the previous process
@@ -126,6 +126,8 @@ int main(int argc, char* argv[]) {
             MPI_Recv(deserialized_packet.data(), deserialized_packet.size(), MPI_CHAR, rank - 1, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
 
             Packet recv = deserialize(deserialized_packet, rank);
+
+            std::cout << "Process " << rank << " received from " << rank - 1 << ": " << recv.rc.GetHLC() << ", " << recv.rc.GetBitmap() << ", " << recv.rc.GetOffsets() << ", " << recv.rc.GetCounters() << ", " << recv.seq_no << ", " << recv.global_var << std::endl;
 
             rc.Recv(recv.getReplayClock(), (uint32_t)std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch()).count());
             global_var = recv.getGlobalVar();

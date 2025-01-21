@@ -114,14 +114,14 @@ int main(int argc, char* argv[]) {
         if (rank != size - 1) {
 
             std::vector<char> serialized_packet = serialize(p);
-            MPI_Send(&serialized_packet, 1, MPI_INT, rank + 1, 0, MPI_COMM_WORLD);
+            MPI_Send(&serialized_packet, serialized_packet.size(), MPI_CHAR, rank + 1, 0, MPI_COMM_WORLD);
         }
 
         // Receive updated value from the previous process
         if (rank != 0) {
 
-            std::vector<char> deserialized_packet;
-            MPI_Recv(&deserialized_packet, 1, MPI_INT, rank - 1, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+            std::vector<char> deserialized_packet(sizeof(uint32_t)*6);
+            MPI_Recv(&deserialized_packet, deserialized_packet.size(), MPI_CHAR, rank - 1, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
 
             Packet recv = deserialize(deserialized_packet, rank);
 

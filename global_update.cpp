@@ -100,14 +100,14 @@ int main(int argc, char* argv[]) {
     int global_var = 0;  // Shared global variable to be incremented by all processes
 
     auto now = std::chrono::system_clock::now();
-    ReplayClock rc = ReplayClock((uint32_t)std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch()).count(), rank, EPSILON, INTERVAL);
+    ReplayClock rc = ReplayClock((uint32_t)1, rank, EPSILON, INTERVAL);
 
     // Each process increments the global variable multiple times (N iterations)
     for (int i = 0; i < N; i++) {
         increment_global_variable(global_var, rank);
 
 
-        rc.SendLocal((uint32_t)std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch()).count());
+        rc.SendLocal((uint32_t)1);
         Packet p = Packet(i, rc, global_var);
 
         // Send updated value to the next process

@@ -4,6 +4,7 @@
 #include <cstdlib>
 #include <ctime>
 #include <chrono>
+#include <cstring>
 
 #include "replay-clock.h"
 

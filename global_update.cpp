@@ -58,6 +58,8 @@ std::vector<char> serialize(Packet &p)
 
     std::memcpy(ptr, &p.global_var, sizeof(uint32_t));
 
+    std::cout << "Serialized packet: " << buffer.data() << std::endl;
+
     return buffer;
 
 }
@@ -75,6 +77,9 @@ Packet deserialize(const std::vector<char>& buffer, int rank)
     std::memcpy(&counters, ptr, sizeof(int)); ptr += sizeof(int);
     std::memcpy(&seq_no, ptr, sizeof(int)); ptr += sizeof(int);
     std::memcpy(&global_var, ptr, sizeof(int)); ptr += sizeof(int);
+
+
+    std::cout << "Deserialized packet: " << hlc << ", " << offsetbitmap << ", " << offsets << ", " << counters << ", " << seq_no << ", " << global_var  << std::endl;
 
     ReplayClock rc = ReplayClock(hlc, rank, (std::bitset<NUM_PROCS>)offsetbitmap, (std::bitset<64>)offsets, counters, EPSILON, INTERVAL);
 

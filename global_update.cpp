@@ -80,6 +80,8 @@ Packet deserialize(const std::vector<char>& buffer, int rank)
 
     Packet p = Packet(seq_no, rc, global_var);
 
+    std::cout << "Process " << rank << " received: " << hlc << ", " << offsetbitmap << ", " << offsets << ", " << counters << ", " << seq_no << ", " << global_var << endl;
+
     return p;
 }
 

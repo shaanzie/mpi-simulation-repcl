@@ -109,7 +109,7 @@ int main(int argc, char* argv[]) {
 
         rc.SendLocal((uint32_t)1);
 
-        std::cout << "Replay Clock for Process " << rank << ": " <<"pt: " << (uint32_t)std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch()).count() << std::endl;
+        std::cout << "Replay Clock for Process " << rank << ": " <<"pt: " << (uint32_t)std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch()).count()/INTERVAL << std::endl;
         rc.PrintClock();
         std::cout << std::endl;
 

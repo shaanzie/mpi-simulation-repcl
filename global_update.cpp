@@ -109,7 +109,9 @@ int main(int argc, char* argv[]) {
 
         rc.SendLocal((uint32_t)1);
 
-        std::cout << "Replay Clock for Process " << rank << ": " << rc.PrintClock() << std::endl;
+        std::cout << "Replay Clock for Process " << rank << ": " << std::endl;
+        rc.PrintClock();
+        std::cout << std::endl;
 
         Packet p = Packet(i, rc, global_var);
 

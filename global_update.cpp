@@ -58,13 +58,6 @@ std::vector<char> serialize(Packet &p)
 
     std::memcpy(ptr, &p.global_var, sizeof(uint32_t));
 
-    // Print the buffer contents in decimal format
-    std::cout << "Serialized buffer (decimal): ";
-    for (char byte : buffer) {
-        std::cout << static_cast<int>(static_cast<unsigned char>(byte)) << " ";
-    }
-    std::cout << std::endl;
-
     return buffer;
 
 }
@@ -82,9 +75,6 @@ Packet deserialize(const std::vector<char>& buffer, int rank)
     std::memcpy(&counters, ptr, sizeof(int)); ptr += sizeof(int);
     std::memcpy(&seq_no, ptr, sizeof(int)); ptr += sizeof(int);
     std::memcpy(&global_var, ptr, sizeof(int)); ptr += sizeof(int);
-
-
-    std::cout << "Deserialized packet: " << hlc << ", " << offsetbitmap << ", " << offsets << ", " << counters << ", " << seq_no << ", " << global_var  << std::endl;
 
     ReplayClock rc = ReplayClock(hlc, rank, (std::bitset<NUM_PROCS>)offsetbitmap, (std::bitset<64>)offsets, counters, EPSILON, INTERVAL);
 
@@ -117,14 +107,11 @@ int main(int argc, char* argv[]) {
         increment_global_variable(global_var, rank);
 
         auto now = std::chrono::system_clock::now();
-
         rc.SendLocal((uint32_t)std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch()).count() / INTERVAL);
 
-        std::cout << "Replay Clock for Process " << rank << ": " <<"pt: " << (uint32_t)std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch()).count() / INTERVAL << std::endl;
-        rc.PrintClock();
-        std::cout << std::endl;
-
         Packet p = Packet(i, rc, global_var);
+
+        std::cout << "Process " << rank << " sending to " << rank + 1 << ": " << p.rc.GetHLC() << ", " << p.rc.GetBitmap() << ", " << p.rc.GetOffsets() << ", " << p.rc.GetCounters() << ", " << p.seq_no << ", " << p.global_var << std::endl;
 
         // Send updated value to the next process
         if (rank != size - 1) {

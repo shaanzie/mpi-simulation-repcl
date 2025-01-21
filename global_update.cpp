@@ -58,11 +58,12 @@ std::vector<char> serialize(Packet &p)
 
     std::memcpy(ptr, &p.global_var, sizeof(uint32_t));
 
-    for(auto c : buffer) 
-    {
-        std:cout << c;
+    // Print the buffer contents in decimal format
+    std::cout << "Serialized buffer (decimal): ";
+    for (char byte : buffer) {
+        std::cout << static_cast<int>(static_cast<unsigned char>(byte)) << " ";
     }
-    std::cout << endl;
+    std::cout << std::endl;
 
     return buffer;
 

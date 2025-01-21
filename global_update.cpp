@@ -7,6 +7,8 @@
 
 #include "replay-clock.h"
 
+using namespace std;
+
 #define N 10  // Number of iterations per process
 
 class Packet {

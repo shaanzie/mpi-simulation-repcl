@@ -20,6 +20,8 @@
 #include <sstream>
 #include <string>
 
+using namespace std;
+
 /**
  * \file
  * \ingroup ReplayClock

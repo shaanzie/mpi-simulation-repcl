@@ -17,6 +17,8 @@
 #include <algorithm>
 #include <unistd.h>
 
+using namespace std;
+
 /**
  * \file
  * \ingroup ReplayClock

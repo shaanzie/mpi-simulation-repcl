@@ -100,14 +100,14 @@ int main(int argc, char* argv[]) {
     int global_var = 0;  // Shared global variable to be incremented by all processes
 
     auto now = std::chrono::system_clock::now();
-    ReplayClock rc = ReplayClock((uint32_t)std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch()).count() / INTERVAL, rank, EPSILON, INTERVAL);
+    ReplayClock rc = ReplayClock((uint32_t)std::chrono::duration_cast<std::chrono::nanoseconds>(now.time_since_epoch()).count() / INTERVAL, rank, EPSILON, INTERVAL);
 
     // Each process increments the global variable multiple times (N iterations)
     for (int i = 0; i < N; i++) {
         increment_global_variable(global_var, rank);
 
         auto now = std::chrono::system_clock::now();
-        rc.SendLocal((uint32_t)std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch()).count() / INTERVAL);
+        rc.SendLocal((uint32_t)std::chrono::duration_cast<std::chrono::nanoseconds>(now.time_since_epoch()).count() / INTERVAL);
 
         Packet p = Packet(i, rc, global_var);
 
@@ -132,7 +132,7 @@ int main(int argc, char* argv[]) {
             std::cout << "Process " << rank << " received from " << rank - 1 << ": " << recv.rc.GetHLC() << ", " << recv.rc.GetBitmap() << ", " << recv.rc.GetOffsets() << ", " << recv.rc.GetCounters() << ", " << recv.seq_no << ", " << recv.global_var << std::endl;
 
             auto now = std::chrono::system_clock::now();
-            rc.Recv(recv.getReplayClock(), (uint32_t)std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch()).count() / INTERVAL);
+            rc.Recv(recv.getReplayClock(), (uint32_t)std::chrono::duration_cast<std::chrono::nanoseconds>(now.time_since_epoch()).count() / INTERVAL);
             global_var = recv.getGlobalVar();
         }
     }

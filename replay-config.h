@@ -1,5 +1,5 @@
 #define REPCL_CONFIG_H
-#define NUM_PROCS 5
+#define NUM_PROCS 10
 #define EPSILON 100
 #define INTERVAL 100000
 #define ALPHA 20

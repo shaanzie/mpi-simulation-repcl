@@ -87,11 +87,12 @@ Packet deserialize(const std::vector<char>& buffer, int rank)
 void increment_global_variable(int &global_var, int rank) {
     int local_incr = rank + 1;  // Each process tries to add its rank + 1 to the global variable
     global_var += local_incr;
-    std::cout << "Process " << rank << " incremented global var by " << local_incr << std::endl;
 }
 
 int main(int argc, char* argv[]) {
     MPI_Init(&argc, &argv);
+
+    printf("TYPE,SENDER,RECIEVER,SEQNO,HLC,BITMAP,OFFSETS,COUNTERS,GLOBALVAR\n");
 
     int rank, size;
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
@@ -111,7 +112,7 @@ int main(int argc, char* argv[]) {
 
         Packet p = Packet(i, rc, global_var);
 
-        std::cout << "Process " << rank << " sending to " << rank + 1 << ": " << p.rc.GetHLC() << ", " << p.rc.GetBitmap() << ", " << p.rc.GetOffsets() << ", " << p.rc.GetCounters() << ", " << p.seq_no << ", " << p.global_var << std::endl;
+        printf("SEND,%d,%d,%d,%d,%d,%d,%d,%d\n", rank, rank + 1, p.seq_no, p.rc.GetHLC(), p.rc.GetBitmap(), p.rc.GetOffsets(), p.rc.GetCounters(), p.global_var);
 
         // Send updated value to the next process
         if (rank != size - 1) {
@@ -129,16 +130,13 @@ int main(int argc, char* argv[]) {
 
             Packet recv = deserialize(deserialized_packet, rank);
 
-            std::cout << "Process " << rank << " received from " << rank - 1 << ": " << recv.rc.GetHLC() << ", " << recv.rc.GetBitmap() << ", " << recv.rc.GetOffsets() << ", " << recv.rc.GetCounters() << ", " << recv.seq_no << ", " << recv.global_var << std::endl;
+            printf("RECV,%d,%d,%d,%d,%d,%d,%d,%d\n", rank, rank + 1, recv.seq_no, recv.rc.GetHLC(), recv.rc.GetBitmap(), recv.rc.GetOffsets(), recv.rc.GetCounters(), recv.global_var);
 
             auto now = std::chrono::system_clock::now();
             rc.Recv(recv.getReplayClock(), (uint32_t)std::chrono::duration_cast<std::chrono::nanoseconds>(now.time_since_epoch()).count() / INTERVAL);
             global_var = recv.getGlobalVar();
         }
     }
-
-    // At the end of each process, print the value of the global variable
-    std::cout << "Process " << rank << " has final global variable value: " << global_var << std::endl;
 
     MPI_Finalize();
     return 0;

@@ -92,11 +92,16 @@ void increment_global_variable(int &global_var, int rank) {
 int main(int argc, char* argv[]) {
     MPI_Init(&argc, &argv);
 
-    printf("TYPE,SENDER,RECIEVER,SEQNO,HLC,BITMAP,OFFSETS,COUNTERS,GLOBALVAR\n");
-
     int rank, size;
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     MPI_Comm_size(MPI_COMM_WORLD, &size);
+
+    if(rank == 0)
+    {
+        printf("TYPE,SENDER,RECIEVER,SEQNO,HLC,BITMAP,OFFSETS,COUNTERS,GLOBALVAR\n");
+    }
+
+    MPI_Barrier(MPI_COMM_WORLD);
 
     int global_var = 0;  // Shared global variable to be incremented by all processes
 

@@ -112,7 +112,7 @@ int main(int argc, char* argv[]) {
 
         Packet p = Packet(i, rc, global_var);
 
-        printf("SEND,%d,%d,%d,%d,%s,%s,%d,%d\n", rank, rank + 1, p.seq_no, p.rc.GetHLC(), p.rc.GetBitmap().to_string(), p.rc.GetOffsets().to_string(), p.rc.GetCounters(), p.global_var);
+        printf("SEND,%d,%d,%d,%d,%s,%s,%d,%d\n", rank, rank + 1, p.seq_no, p.rc.GetHLC(), p.rc.GetBitmap().to_string().c_str(), p.rc.GetOffsets().to_string().c_str(), p.rc.GetCounters(), p.global_var);
 
         // Send updated value to the next process
         if (rank != size - 1) {
@@ -130,7 +130,7 @@ int main(int argc, char* argv[]) {
 
             Packet recv = deserialize(deserialized_packet, rank);
 
-            printf("RECV,%d,%d,%d,%d,%s,%s,%d,%d\n", rank, rank + 1, recv.seq_no, recv.rc.GetHLC(), recv.rc.GetBitmap().to_string(), recv.rc.GetOffsets().to_string(), recv.rc.GetCounters(), recv.global_var);
+            printf("RECV,%d,%d,%d,%d,%s,%s,%d,%d\n", rank, rank + 1, recv.seq_no, recv.rc.GetHLC(), recv.rc.GetBitmap().to_string().c_str(), recv.rc.GetOffsets().to_string().c_str(), recv.rc.GetCounters(), recv.global_var);
 
             auto now = std::chrono::system_clock::now();
             rc.Recv(recv.getReplayClock(), (uint32_t)std::chrono::duration_cast<std::chrono::nanoseconds>(now.time_since_epoch()).count() / INTERVAL);

@@ -66,12 +66,12 @@ Packet deserialize(const std::vector<char>& buffer, int rank)
 
     uint32_t hlc, offsetbitmap, offsets, counters, seq_no, global_var;
 
-    std::memcpy(&hlc, ptr, sizeof(int)); ptr += sizeof(int);
-    std::memcpy(&offsetbitmap, ptr, sizeof(int)); ptr += sizeof(int);
-    std::memcpy(&offsets, ptr, sizeof(int)); ptr += sizeof(int);
-    std::memcpy(&counters, ptr, sizeof(int)); ptr += sizeof(int);
-    std::memcpy(&seq_no, ptr, sizeof(int)); ptr += sizeof(int);
-    std::memcpy(&global_var, ptr, sizeof(int)); ptr += sizeof(int);
+    std::memcpy(&hlc, ptr, sizeof(uint32_t)); ptr += sizeof(uint32_t);
+    std::memcpy(&offsetbitmap, ptr, sizeof(uint32_t)); ptr += sizeof(uint32_t);
+    std::memcpy(&offsets, ptr, sizeof(uint32_t)); ptr += sizeof(uint32_t);
+    std::memcpy(&counters, ptr, sizeof(uint32_t)); ptr += sizeof(uint32_t);
+    std::memcpy(&seq_no, ptr, sizeof(uint32_t)); ptr += sizeof(uint32_t);
+    std::memcpy(&global_var, ptr, sizeof(uint32_t)); ptr += sizeof(uint32_t);
 
     ReplayClock rc = ReplayClock(hlc, rank, (std::bitset<NUM_PROCS>)offsetbitmap, (std::bitset<64>)offsets, counters, EPSILON, INTERVAL);
 

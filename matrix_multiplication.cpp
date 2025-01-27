@@ -199,7 +199,6 @@ int main(int argc, char *argv[]) {
 
                 auto now = std::chrono::system_clock::now();
                 rc.SendLocal((uint32_t)std::chrono::duration_cast<std::chrono::nanoseconds>(now.time_since_epoch()).count() / INTERVAL);
-                rc.PrintClock();
                 seq_no++;
                 Packet p = Packet(seq_no, rc, local_result);
                 std::vector<char> serialized_packet = serialize(p);

@@ -5,3 +5,4 @@
 #define ALPHA 20
 #define DELTA 1
 #define MAX_OFFSET_SIZE 7
+#define N 4

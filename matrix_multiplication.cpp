@@ -7,8 +7,6 @@
 #include <cstring>
 #include "replay-clock.h"
 
-#define N 4  // Size of the matrix and vector
-
 class Packet {
 
     public:

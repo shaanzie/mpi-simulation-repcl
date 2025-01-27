@@ -174,7 +174,7 @@ int main(int argc, char *argv[]) {
 
     // Force race condition with random delays
     srand(time(NULL) + rank);  // Different seed per process
-    usleep((rand() % 1000) * 1000);  // Random sleep between 0-1 seconds
+    usleep((rand() % 1000) * 10000);  // Random sleep between 0-1 seconds
 
     // Race condition: All processes try to send first, leading to potential deadlock
     for (int i = 0; i < size; i++) {

@@ -134,11 +134,11 @@ int main(int argc, char *argv[]) {
     // Get the name of the processor
     MPI_Get_processor_name(processor_name, &name_len);
 
-    if(rank == 0)
-    {
-        printf("Processor map:\n");
-    }
-    printf("%s:%d\n", processor_name, rank);
+    // if(rank == 0)
+    // {
+    //     printf("Processor map:\n");
+    // }
+    // printf("%s:%d\n", processor_name, rank);
 
     if(rank == 0)
     {
@@ -159,7 +159,7 @@ int main(int argc, char *argv[]) {
         generate_random_matrix(A);
         generate_random_vector(x);
 
-        printf("Generated matrix A:\n");
+        // printf("Generated matrix A:\n");
         for (int i = 0; i < N; i++) {
             for (int j = 0; j < N; j++) {
                 printf("%d ", A[i][j]);
@@ -167,7 +167,7 @@ int main(int argc, char *argv[]) {
             printf("\n");
         }
 
-        print_vector(x, N, rank, "generated vector X");
+        // print_vector(x, N, rank, "generated vector X");
     }
 
     // Broadcast the matrix and vector to all processes

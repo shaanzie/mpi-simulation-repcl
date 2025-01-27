@@ -1,7 +1,10 @@
 #include <mpi.h>
-#include <stdio.h>
-#include <stdlib.h>
-
+#include <iostream>
+#include <vector>
+#include <cstdlib>
+#include <ctime>
+#include <chrono>
+#include <cstring>
 #include "replay-clock.h"
 
 #define N 4  // Size of the matrix and vector

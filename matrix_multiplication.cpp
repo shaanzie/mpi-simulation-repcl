@@ -230,7 +230,7 @@ int main(int argc, char *argv[]) {
                 seq_no++;
                 Packet p = Packet(seq_no, rc, local_result);
                 std::vector<char> serialized_packet = serialize(p);
-                printf("SEND,%d,%d,%d,%d,%s,%s,%d,SentLocalResult\n", rank, rank + 1, p.seq_no, p.rc.GetHLC(), p.rc.GetBitmap().to_string().c_str(), p.rc.GetOffsets().to_string().c_str(), p.rc.GetCounters());
+                printf("SEND,%d,%d,%d,%d,%s,%s,%d,SentLocalResult\n", rank, rank + 1, p.seq_no, rc.GetHLC(), rc.GetBitmap().to_string().c_str(), rc.GetOffsets().to_string().c_str(), rc.GetCounters());
                 MPI_Send(serialized_packet.data(), serialized_packet.size(), MPI_CHAR, i, 0, MPI_COMM_WORLD);
             }
 

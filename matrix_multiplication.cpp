@@ -117,7 +117,7 @@ void broadcast_vector(int X[N]) {
 }
 
 int main(int argc, char *argv[]) {
-    int rank, size;
+    int rank, size, name_len;
     MPI_Init(&argc, &argv);
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     MPI_Comm_size(MPI_COMM_WORLD, &size);
@@ -128,6 +128,11 @@ int main(int argc, char *argv[]) {
     
     int local_result = 0;
     int global_result[N];
+
+    char processor_name[MPI_MAX_PROCESSOR_NAME];
+
+    // Get the name of the processor
+    MPI_Get_processor_name(processor_name, &name_len);
 
     if(rank == 0)
     {
@@ -189,14 +194,14 @@ int main(int argc, char *argv[]) {
                 seq_no++;
                 Packet p = Packet(seq_no, rc, local_result);
                 std::vector<char> serialized_packet = serialize(p);
-                printf("SEND,%d,%d,%d,%d,%s,%s,%d,SentLocalResult\n", rank, rank + 1, p.seq_no, p.rc.GetHLC(), p.rc.GetBitmap().to_string().c_str(), p.rc.GetOffsets().to_string().c_str(), p.rc.GetCounters());
+                printf("SEND,%s:%d,%s:%d,%d,%d,%s,%s,%d,SentLocalResult\n", processor_name, rank, processor_name, rank + 1, p.seq_no, p.rc.GetHLC(), p.rc.GetBitmap().to_string().c_str(), p.rc.GetOffsets().to_string().c_str(), p.rc.GetCounters());
                 MPI_Send(serialized_packet.data(), serialized_packet.size(), MPI_CHAR, i, 0, MPI_COMM_WORLD);
 
 
                 std::vector<char> deserialized_packet(sizeof(uint32_t)*6);
                 MPI_Recv(deserialized_packet.data(), deserialized_packet.size(), MPI_CHAR, i, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
                 Packet recv = deserialize(deserialized_packet, rank);
-                printf("RECV,%d,%d,%d,%d,%s,%s,%d,ReceivedLocalResult\n", rank, rank + 1, recv.seq_no, recv.rc.GetHLC(), recv.rc.GetBitmap().to_string().c_str(), recv.rc.GetOffsets().to_string().c_str(), recv.rc.GetCounters());
+                printf("RECV,%s:%d,%s:%d,%d,%d,%s,%s,%d,ReceivedLocalResult\n", processor_name, rank, processor_name, rank + 1, recv.seq_no, recv.rc.GetHLC(), recv.rc.GetBitmap().to_string().c_str(), recv.rc.GetOffsets().to_string().c_str(), recv.rc.GetCounters());
                 now = std::chrono::system_clock::now();
                 rc.Recv(recv.getReplayClock(), (uint32_t)std::chrono::duration_cast<std::chrono::nanoseconds>(now.time_since_epoch()).count() / INTERVAL);
                 global_result[i] = recv.global_var;
@@ -207,7 +212,7 @@ int main(int argc, char *argv[]) {
                 std::vector<char> deserialized_packet(sizeof(uint32_t)*6);
                 MPI_Recv(deserialized_packet.data(), deserialized_packet.size(), MPI_CHAR, i, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
                 Packet recv = deserialize(deserialized_packet, rank);
-                printf("RECV,%d,%d,%d,%d,%s,%s,%d,ReceivedLocalResult\n", rank, rank + 1, recv.seq_no, recv.rc.GetHLC(), recv.rc.GetBitmap().to_string().c_str(), recv.rc.GetOffsets().to_string().c_str(), recv.rc.GetCounters());
+                printf("RECV,%s:%d,%s:%d,%d,%d,%s,%s,%d,ReceivedLocalResult\n", processor_name, rank, processor_name, rank + 1, recv.seq_no, recv.rc.GetHLC(), recv.rc.GetBitmap().to_string().c_str(), recv.rc.GetOffsets().to_string().c_str(), recv.rc.GetCounters());
                 now = std::chrono::system_clock::now();
                 rc.Recv(recv.getReplayClock(), (uint32_t)std::chrono::duration_cast<std::chrono::nanoseconds>(now.time_since_epoch()).count() / INTERVAL);
                 global_result[i] = recv.global_var;
@@ -217,7 +222,7 @@ int main(int argc, char *argv[]) {
                 seq_no++;
                 Packet p = Packet(seq_no, rc, local_result);
                 std::vector<char> serialized_packet = serialize(p);
-                printf("SEND,%d,%d,%d,%d,%s,%s,%d,SentLocalResult\n", rank, rank + 1, p.seq_no, p.rc.GetHLC(), p.rc.GetBitmap().to_string().c_str(), p.rc.GetOffsets().to_string().c_str(), p.rc.GetCounters());
+                printf("SEND,%s:%d,%s:%d,%d,%d,%s,%s,%d,SentLocalResult\n", processor_name, rank, processor_name, rank + 1, p.seq_no, p.rc.GetHLC(), p.rc.GetBitmap().to_string().c_str(), p.rc.GetOffsets().to_string().c_str(), p.rc.GetCounters());
                 MPI_Send(serialized_packet.data(), serialized_packet.size(), MPI_CHAR, i, 0, MPI_COMM_WORLD);
             }
 
@@ -225,7 +230,7 @@ int main(int argc, char *argv[]) {
         } else {
             auto now = std::chrono::system_clock::now();
             rc.SendLocal((uint32_t)std::chrono::duration_cast<std::chrono::nanoseconds>(now.time_since_epoch()).count() / INTERVAL);
-            printf("LOCAL,%d,%d,%d,%d,%s,%s,%d,UpdatingGlobalResult\n", rank, rank, 0, rc.GetHLC(), rc.GetBitmap().to_string().c_str(), rc.GetOffsets().to_string().c_str(), rc.GetCounters());
+            printf("LOCAL,%s:%d,%s:%d,%d,%d,%s,%s,%d,UpdatingGlobalResult\n", processor_name, rank, processor_name, rank, 0, rc.GetHLC(), rc.GetBitmap().to_string().c_str(), rc.GetOffsets().to_string().c_str(), rc.GetCounters());
             global_result[i] = local_result;
         }
     }

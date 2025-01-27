@@ -1,7 +1,6 @@
 NUM_PROCS=$1
 EPSILON=$2
 INTERVAL=$3
-MAX_OFFSET_SIZE=$7
 
 # Function to calculate the number of bits required to store an integer
 num_bits() {

@@ -160,12 +160,12 @@ int main(int argc, char *argv[]) {
         generate_random_vector(x);
 
         // printf("Generated matrix A:\n");
-        for (int i = 0; i < N; i++) {
-            for (int j = 0; j < N; j++) {
-                printf("%d ", A[i][j]);
-            }
-            printf("\n");
-        }
+        // for (int i = 0; i < N; i++) {
+        //     for (int j = 0; j < N; j++) {
+        //         printf("%d ", A[i][j]);
+        //     }
+        //     printf("\n");
+        // }
 
         // print_vector(x, N, rank, "generated vector X");
     }

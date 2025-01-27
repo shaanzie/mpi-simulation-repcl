@@ -140,8 +140,6 @@ int main(int argc, char *argv[]) {
     }
     printf("%s:%d\n", processor_name, rank);
 
-    MPI_Barrier(MPI_COMM_WORLD);
-
     if(rank == 0)
     {
         printf("TYPE,SENDER,RECIEVER,SEQNO,HLC,BITMAP,OFFSETS,COUNTERS\n");
@@ -175,6 +173,8 @@ int main(int argc, char *argv[]) {
     // Broadcast the matrix and vector to all processes
     broadcast_matrix(A);
     broadcast_vector(x);
+
+    MPI_Barrier(MPI_COMM_WORLD);
 
 
     auto now = std::chrono::system_clock::now();
@@ -244,7 +244,7 @@ int main(int argc, char *argv[]) {
     }
 
     // Print the computed result
-    print_vector(global_result, N, rank, "result vector");
+    // print_vector(global_result, N, rank, "result vector");
 
     MPI_Finalize();
     return 0;

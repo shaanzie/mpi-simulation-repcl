@@ -176,13 +176,16 @@ int main(int argc, char *argv[]) {
     srand(time(NULL) + rank);  // Different seed per process
     usleep((rand() % 1000) * 10000);  // Random sleep between 0-1 seconds
 
+    int seq_no = 0;
+
     // Race condition: All processes try to send first, leading to potential deadlock
     for (int i = 0; i < size; i++) {
         if (rank != i) {
             
             auto now = std::chrono::system_clock::now();
             rc.SendLocal((uint32_t)std::chrono::duration_cast<std::chrono::nanoseconds>(now.time_since_epoch()).count() / INTERVAL);
-            Packet p = Packet(i, rc, local_result);
+            seq_no++;
+            Packet p = Packet(seq_no, rc, local_result);
             std::vector<char> serialized_packet = serialize(p);
             printf("SEND,%d,%d,%d,%d,%s,%s,%d,SentLocalResult\n", rank, rank + 1, p.seq_no, p.rc.GetHLC(), p.rc.GetBitmap().to_string().c_str(), p.rc.GetOffsets().to_string().c_str(), p.rc.GetCounters());
             MPI_Send(serialized_packet.data(), serialized_packet.size(), MPI_CHAR, i, 0, MPI_COMM_WORLD);

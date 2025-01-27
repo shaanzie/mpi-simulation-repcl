@@ -80,12 +80,40 @@ Packet deserialize(const std::vector<char>& buffer, int rank)
     return p;
 }
 
-void print_vector(int *vec, int size, int rank) {
-    printf("Process %d received result: ", rank);
+void print_vector(int *vec, int size, int rank, const char *label) {
+    printf("Process %d %s: ", rank, label);
     for (int i = 0; i < size; i++) {
         printf("%d ", vec[i]);
     }
     printf("\n");
+}
+
+// Function to generate a random NxN matrix
+void generate_random_matrix(int A[N][N]) {
+    for (int i = 0; i < N; i++) {
+        for (int j = 0; j < N; j++) {
+            A[i][j] = rand() % 10;  // Random values between 0-9
+        }
+    }
+}
+
+// Function to generate a random vector of size N
+void generate_random_vector(int X[N]) {
+    for (int i = 0; i < N; i++) {
+        X[i] = rand() % 10;  // Random values between 0-9
+    }
+}
+
+// Function to broadcast the matrix to all processes
+void broadcast_matrix(int A[N][N]) {
+    for (int i = 0; i < N; i++) {
+        MPI_Bcast(A[i], N, MPI_INT, 0, MPI_COMM_WORLD);
+    }
+}
+
+// Function to broadcast the vector to all processes
+void broadcast_vector(int X[N]) {
+    MPI_Bcast(X, N, MPI_INT, 0, MPI_COMM_WORLD);
 }
 
 int main(int argc, char *argv[]) {
@@ -94,13 +122,10 @@ int main(int argc, char *argv[]) {
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     MPI_Comm_size(MPI_COMM_WORLD, &size);
 
-    int A[N][N] = {
-        {1, 2, 3, 4},
-        {5, 6, 7, 8},
-        {9, 10, 11, 12},
-        {13, 14, 15, 16}
-    };
-    int x[N] = {1, 2, 3, 4};  // Input vector
+    int A[N][N];
+    int x[N];  // Input vector
+
+    
     int local_result = 0;
     int global_result[N];
 
@@ -116,6 +141,27 @@ int main(int argc, char *argv[]) {
         MPI_Finalize();
         return EXIT_FAILURE;
     }
+
+    // Process 0 initializes the random matrix and vector and broadcasts them
+    if (rank == 0) {
+        srand(time(NULL));  // Seed for random number generation
+        generate_random_matrix(A);
+        generate_random_vector(x);
+
+        printf("Generated matrix A:\n");
+        for (int i = 0; i < N; i++) {
+            for (int j = 0; j < N; j++) {
+                printf("%d ", A[i][j]);
+            }
+            printf("\n");
+        }
+
+        print_vector(x, N, rank, "generated vector X");
+    }
+
+    // Broadcast the matrix and vector to all processes
+    broadcast_matrix(A);
+    broadcast_vector(x);
 
 
     auto now = std::chrono::system_clock::now();
@@ -156,8 +202,8 @@ int main(int argc, char *argv[]) {
         }
     }
 
-    // Print the result vector from each process
-    print_vector(global_result, N, rank);
+    // Print the computed result
+    print_vector(global_result, N, rank, "result vector");
 
     MPI_Finalize();
     return 0;

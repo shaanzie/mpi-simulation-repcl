@@ -202,7 +202,7 @@ int main(int argc, char *argv[]) {
                 seq_no++;
                 Packet p = Packet(seq_no, rc, local_result);
                 std::vector<char> serialized_packet = serialize(p);
-                printf("SEND,%d,%d,%d,%d,%s,%s,%d,SentLocalResult\n", rank, rank + 1, p.seq_no, p.rc.GetHLC(), p.rc.GetBitmap().to_string().c_str(), p.rc.GetOffsets().to_string().c_str(), p.rc.GetCounters());
+                printf("SEND,%d,%d,%d,%d,%s,%s,%d,SentLocalResult\n", rank, rank + 1, p.seq_no, rc.GetHLC(), rc.GetBitmap().to_string().c_str(), rc.GetOffsets().to_string().c_str(), rc.GetCounters());
                 MPI_Send(serialized_packet.data(), serialized_packet.size(), MPI_CHAR, i, 0, MPI_COMM_WORLD);
 
 
@@ -211,7 +211,7 @@ int main(int argc, char *argv[]) {
                 Packet recv = deserialize(deserialized_packet, rank);
                 now = std::chrono::system_clock::now();
                 rc.Recv(recv.getReplayClock(), (uint32_t)std::chrono::duration_cast<std::chrono::nanoseconds>(now.time_since_epoch()).count() / INTERVAL);
-                printf("RECV,%d,%d,%d,%d,%s,%s,%d,ReceivedLocalResult\n", rank, rank + 1, recv.seq_no, recv.rc.GetHLC(), recv.rc.GetBitmap().to_string().c_str(), recv.rc.GetOffsets().to_string().c_str(), recv.rc.GetCounters());
+                printf("RECV,%d,%d,%d,%d,%s,%s,%d,ReceivedLocalResult\n", rank, rank + 1, recv.seq_no, rc.GetHLC(), rc.GetBitmap().to_string().c_str(), rc.GetOffsets().to_string().c_str(), rc.GetCounters());
                 global_result[i] = recv.global_var;
 
             }
@@ -222,8 +222,7 @@ int main(int argc, char *argv[]) {
                 Packet recv = deserialize(deserialized_packet, rank);
                 now = std::chrono::system_clock::now();
                 rc.Recv(recv.getReplayClock(), (uint32_t)std::chrono::duration_cast<std::chrono::nanoseconds>(now.time_since_epoch()).count() / INTERVAL);
-                rc.PrintClock();
-                printf("RECV,%d,%d,%d,%d,%s,%s,%d,ReceivedLocalResult\n", rank, rank + 1, recv.seq_no, recv.rc.GetHLC(), recv.rc.GetBitmap().to_string().c_str(), recv.rc.GetOffsets().to_string().c_str(), recv.rc.GetCounters());
+                printf("RECV,%d,%d,%d,%d,%s,%s,%d,ReceivedLocalResult\n", rank, rank + 1, recv.seq_no, rc.GetHLC(), rc.GetBitmap().to_string().c_str(), rc.GetOffsets().to_string().c_str(), rc.GetCounters());
                 global_result[i] = recv.global_var;
 
                 auto now = std::chrono::system_clock::now();

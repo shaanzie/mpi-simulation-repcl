@@ -5,6 +5,8 @@
 #include <ctime>
 #include <chrono>
 #include <cstring>
+#include <time.h>
+#include <unistd.h>
 #include "replay-clock.h"
 
 class Packet {
@@ -169,6 +171,10 @@ int main(int argc, char *argv[]) {
     for (int j = 0; j < N; j++) {
         local_result += A[rank][j] * x[j];
     }
+
+    // Force race condition with random delays
+    srand(time(NULL) + rank);  // Different seed per process
+    usleep((rand() % 1000) * 1000);  // Random sleep between 0-1 seconds
 
     // Race condition: All processes try to send first, leading to potential deadlock
     for (int i = 0; i < size; i++) {

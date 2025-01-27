@@ -136,6 +136,8 @@ int main(int argc, char *argv[]) {
 
     printf("Processor map\n%s:%d\n", processor_name, rank);
 
+    MPI_Barrier(MPI_COMM_WORLD);
+
     if(rank == 0)
     {
         printf("TYPE,SENDER,RECIEVER,SEQNO,HLC,BITMAP,OFFSETS,COUNTERS\n");

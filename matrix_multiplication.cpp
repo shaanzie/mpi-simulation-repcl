@@ -134,7 +134,11 @@ int main(int argc, char *argv[]) {
     // Get the name of the processor
     MPI_Get_processor_name(processor_name, &name_len);
 
-    printf("Processor map\n%s:%d\n", processor_name, rank);
+    if(rank == 0)
+    {
+        printf("Processor map:\n");
+    }
+    printf("%s:%d\n", processor_name, rank);
 
     MPI_Barrier(MPI_COMM_WORLD);
 

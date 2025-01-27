@@ -138,15 +138,15 @@ void
 ReplayClock::Recv(ReplayClock m_ReplayClock, uint32_t node_hlc)
 {
 
-    // std::cout << "--------------------------RECV--------------------------" << std::endl;
+    std::cout << "--------------------------RECV--------------------------" << std::endl;
 
-    // std::cout << "--------------------------NODE CLOCK--------------------------" << std::endl;
+    std::cout << "--------------------------NODE CLOCK--------------------------" << std::endl;
 
-    // PrintClock();
+    PrintClock();
 
-    // std::cout << "--------------------------MESSAGE CLOCK--------------------------" << std::endl;
+    std::cout << "--------------------------MESSAGE CLOCK--------------------------" << std::endl;
 
-    // m_ReplayClock.PrintClock();
+    m_ReplayClock.PrintClock();
 
     uint32_t new_hlc = std::max(hlc, m_ReplayClock.hlc);
     new_hlc = std::max(new_hlc, node_hlc);
@@ -198,11 +198,11 @@ ReplayClock::Recv(ReplayClock m_ReplayClock, uint32_t node_hlc)
 
     offset_bitmap[nodeId] = 1;
 
-    // std::cout << "--------------------------FINAL CLOCK--------------------------" << std::endl;
+    std::cout << "--------------------------FINAL CLOCK--------------------------" << std::endl;
 
-    // PrintClock();
+    PrintClock();
 
-    // std::cout << "--------------------------RECV DONE!--------------------------" << std::endl;
+    std::cout << "--------------------------RECV DONE!--------------------------" << std::endl;
 
     // sleep(1);
 }

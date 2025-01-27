@@ -222,6 +222,7 @@ int main(int argc, char *argv[]) {
                 Packet recv = deserialize(deserialized_packet, rank);
                 now = std::chrono::system_clock::now();
                 rc.Recv(recv.getReplayClock(), (uint32_t)std::chrono::duration_cast<std::chrono::nanoseconds>(now.time_since_epoch()).count() / INTERVAL);
+                rc.PrintClock();
                 printf("RECV,%d,%d,%d,%d,%s,%s,%d,ReceivedLocalResult\n", rank, rank + 1, recv.seq_no, recv.rc.GetHLC(), recv.rc.GetBitmap().to_string().c_str(), recv.rc.GetOffsets().to_string().c_str(), recv.rc.GetCounters());
                 global_result[i] = recv.global_var;
 
